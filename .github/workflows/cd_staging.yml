@@ -2,14 +2,18 @@ name: deploy to staging
 on:
   push:
     branches:
-      - "main"
+      - main
 jobs:
   redeploy_everthing:
-    name: Redeploy everything to the staging cluster
-
+    name: Deploying everything to the staging cluster
     steps:
       - name: SSH into server
       - run: |
-          echo ${{secrets.SSH_PRIVATE_KEY}} &> ~ssh_key
-          ssh -i ~ssh_key 
-
+          echo ${{secrets.SSH_PRIVATE_KEY}} &> ~/ssh_key
+          ssh -i ~ssh_key root@178.62.127.26
+          cd bookmyshow-deployment && git pull
+          pnpm install
+          pnpm run build
+          pm2 restart http-server
+          pm2 restart web
+          pm2 restart ws-server
