@@ -10,11 +10,14 @@ jobs:
     steps:
       - name: SSH into server
         run: |
-          echo "${{secrets.SSH_PRIVATE_KEY}}" &> ~/ssh_key
-          ssh -i ~ssh_key root@178.62.127.26
-          cd bookmyshow-deployment && git pull
-          pnpm install
-          pnpm run build
-          pm2 restart http-server
-          pm2 restart web
-          pm2 restart ws-server
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
+          chmod 600 ~/ssh_key
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@178.62.127.26 << 'EOF'
+            cd bookmyshow-deployment
+            git pull
+            pnpm install
+            pnpm run build
+            pm2 restart http-server
+            pm2 restart web
+            pm2 restart ws-server
+          EOF
