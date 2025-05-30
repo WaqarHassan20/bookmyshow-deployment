@@ -5,10 +5,11 @@ on:
       - main
 jobs:
   redeploy_everthing:
+    runs-on: ubuntu-latest
     name: Deploying everything to the staging cluster
     steps:
       - name: SSH into server
-      - run: |
+        run: |
           echo ${{secrets.SSH_PRIVATE_KEY}} &> ~/ssh_key
           ssh -i ~ssh_key root@178.62.127.26
           cd bookmyshow-deployment && git pull
