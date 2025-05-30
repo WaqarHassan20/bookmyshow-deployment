@@ -6,14 +6,17 @@ on:
 jobs:
   redeploy_everthing:
     runs-on: ubuntu-latest
-    name: Deploying everything to the staging cluster
     steps:
-      - name: SSH into server
+      - name: SSH into server and deploy
         run: |
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/ssh_key
           chmod 600 ~/ssh_key
-          ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@178.62.127.26 -t "cd 
-          bookmyshow-deployment && git pull origin main && npm install -g pnpm && pnpm install && pnpm 
-          run build && pm2 restart http-server && pm2 restart web && pm2 restart
-          ws-server"  
+          ssh -o StrictHostKeyChecking=no -i ~/ssh_key root@178.62.127.26 << 'EOF'
+            cd bookmyshow-deployment
+            git pull
+            pnpm install
+            pnpm run build
+            pm2 restart http-server
+            pm2 restart web
+            pm2 restart ws-server
           EOF
