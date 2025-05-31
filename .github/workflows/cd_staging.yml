@@ -2,7 +2,7 @@ name: deploy to staging
 on:
   push:
     branches:
-      - production
+      - main
 jobs:
   redeploy_everthing:
     runs-on: ubuntu-latest
